@@ -47,4 +47,21 @@ router.post('/api/add', function(req, res, next) {
         }
     })
 });
+
+//删除
+router.get('/api/remove', function(req, res, next) {
+    var Id = req.query.Id;
+    mongodb.getmongodb('people', function(err, coll, con) {
+        if (err) {
+            return res.json({ code: 0, mes: err })
+        }
+        coll.deleteOne({ Id: Id }, function(error, result) {
+            if (error) {
+                return res.json({ code: 0, mes: error })
+            } else {
+                res.json({ code: 1, mes: "删除成功" })
+            }
+        })
+    })
+});
 module.exports = router;
