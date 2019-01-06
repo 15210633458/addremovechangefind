@@ -77,22 +77,37 @@ router.post('/api/change', function(req, res, next) {
         add = parse.add,
         Id = parse.Id;
 
-    if (Id) {
-        mongodb.getmongodb('people', function(err, coll, con) {
-            if (err) {
-                res.json({ code: 0, mes: err })
-            } else {
-                coll.updateOne({ Id: Id }, { $set: { name: name, age: age, phone: phone, add: add, Id: Id } }, function(error, result) {
-                    if (error) {
-                        res.json({ code: 0, mes: error })
-                    } else {
-                        res.json({ code: 1, mes: "修改成功" })
-                    }
-                    con.close()
-                })
-            }
-        })
-    }
+    mongodb.getmongodb('people', function(err, coll, con) {
+        if (err) {
+            res.json({ code: 0, mes: err })
+        } else {
+            coll.updateOne({ Id: Id }, { $set: { name: name, age: age, phone: phone, add: add, Id: Id } }, function(error, result) {
+                if (error) {
+                    res.json({ code: 0, mes: error })
+                } else {
+                    res.json({ code: 1, mes: "修改成功" })
+                }
+                con.close()
+            })
+        }
+    })
+});
 
+//查
+router.get('/api/find', function(req, res, next) {
+    var Id = req.query.Id;
+    mongodb.getmongodb('people', function(err, coll, con) {
+        if (err) {
+            return res.json({ code: 0, mes: err })
+        }
+        coll.findOne({ Id: Id }, function(error, result) {
+            if (error) {
+                return res.json({ code: 0, mes: error })
+            } else {
+                res.json({ code: 1, data: result })
+            }
+            con.close()
+        })
+    })
 });
 module.exports = router;
