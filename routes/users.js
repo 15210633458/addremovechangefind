@@ -43,6 +43,7 @@ router.post('/api/add', function(req, res, next) {
                 } else {
                     res.json({ code: 1, mes: "添加成功" })
                 }
+                con.close()
             })
         }
     })
@@ -61,7 +62,37 @@ router.get('/api/remove', function(req, res, next) {
             } else {
                 res.json({ code: 1, mes: "删除成功" })
             }
+            con.close()
         })
     })
+});
+
+//修改
+router.post('/api/change', function(req, res, next) {
+    //console.log(req.body)
+    var parse = req.body,
+        name = parse.name,
+        age = parse.age,
+        phone = parse.phone,
+        add = parse.add,
+        Id = parse.Id;
+
+    if (Id) {
+        mongodb.getmongodb('people', function(err, coll, con) {
+            if (err) {
+                res.json({ code: 0, mes: err })
+            } else {
+                coll.updateOne({ Id: Id }, { $set: { name: name, age: age, phone: phone, add: add, Id: Id } }, function(error, result) {
+                    if (error) {
+                        res.json({ code: 0, mes: error })
+                    } else {
+                        res.json({ code: 1, mes: "修改成功" })
+                    }
+                    con.close()
+                })
+            }
+        })
+    }
+
 });
 module.exports = router;
